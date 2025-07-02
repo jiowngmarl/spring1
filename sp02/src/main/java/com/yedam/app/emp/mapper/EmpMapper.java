@@ -2,6 +2,8 @@ package com.yedam.app.emp.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.yedam.app.emp.service.EmpVO;
 
 public interface EmpMapper {
@@ -14,4 +16,10 @@ public interface EmpMapper {
 	
 	// 등록
 	public int insertInfo(EmpVO empVO);
+	
+	// 수정
+	public int updateInfo(@Param("id") int eid,@Param("info") EmpVO empVO);
+
+	// 삭제
+	public int deleteInfo(int employeeId);
 }
