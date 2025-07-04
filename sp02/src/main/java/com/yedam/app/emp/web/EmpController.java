@@ -84,7 +84,7 @@ public class EmpController {
 	}
 		
 	// 수정 - 처리 : POST + AJAX + JSON
-	@GetMapping("empUpdate")
+	@PostMapping("empUpdate")
 	@ResponseBody // AJAX, AJAX를 사용하면 model객체를 사용하지않는다, AJAX는 화면없이 돌아가지만 model객체는 화면을 만들어주는 것                           
 	public Map<String, Object> empUpdateProcess(@RequestBody /*JSON*/ EmpVO empVO) {
 		return empService.modifyInfo(empVO);
