@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{common/layouts/default_layout}"
+        layout:fragment="Content">
+<body>
+	<div class="container">
+		<form name="insertForm" th:action="@{/empInsert}" method="post">
+			<h3>사원 정보 등록</h3>	
+			<div>
+				<label for="ename">이름</label>
+				<input type="text" id="ename" name="lastName">
+			</div>
+			<div>
+				<label for="email">이메일</label>
+				<input type="text" id="email" name="email">
+			</div>
+			<div>
+				<label for="hDate">입사일</label>
+				<input type="date" id="hDate" name="hireDate">
+			</div>
+			<div>
+				<label for="job">업무</label>
+				<input type="text" id="job" name="jobId">
+			</div>
+			<div>
+				<label for="sal">급여</label>
+				<input type="number" step="0.01" min="0" id="sal" name="salary">
+			</div>
+			<div>
+				<button type="submit">저장</button>
+			</div>
+		</form>
+		<script>
+			$(insertForm).on('submit', validationCheck);
+			
+			function validationCheck(event){
+				// submit 이벤트 일시정지 | 아래 셋중 하나만 충족되어도 submit 정지
+				event.preventDefault();
+				
+				//이름
+				let nameTag = $('form[name="insertForm"] [name="lastName"]');
+								//name이 insertForm인 태그에서 하위 속성이 lastName 인 태그
+				if(nameTag.val() == ''){
+					nameTag.focus(); //포커스 이벤트 강제 생성, 비교를 할때 null이 아닌 공백을 넣어서 유무를 비교
+					alert('이름은 필수값입니다.');
+					return;
+				}
+				//이메일
+				let emailTag = $(insertForm).find('[name="email"]');
+								//insertForm 에서 자식 속성이 email인 태그
+				if(emailTag.val() == ''){
+					emailTag.focus();
+					return;
+				}
+				//업무
+				let jobTag = $('form[name="insertForm"]').filter('[name="jobId"]');
+				//name이 insertForm인 태그에서 하위 속성이 lastName 인 태그
+				if(jobTag.val() == ''){
+					jobTag.focus(); 
+					return;
+				}
+				
+				insertForm.submit();
+				
+			}
+		</script>
+	</div>
+</body>
+</html>

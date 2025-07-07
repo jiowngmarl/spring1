@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{common/layouts/default_layout}"
+        layout:fragment="Content">
+<body>
+	<div class="container">
+		<!-- ✅ id 추가 -->
+		<form name="updateForm" id="updateForm" th:object="${emp}">
+			<h3>사원 정보 수정</h3>
+			
+			<div>
+				<label for="eid">사원번호</label>
+				<input type="text" id="eid" th:field="*{employeeId}" readonly>
+			</div>
+			<div>
+				<label for="ename">이름</label>
+				<input type="text" id="ename" th:field="*{lastName}">
+			</div>
+			<div>
+				<label for="email">이메일</label>
+				<input type="text" id="email" th:field="*{email}">
+			</div>
+			<div>
+				<label for="hDate">입사일</label>
+				<input type="date" id="hDate" th:field="*{hireDate}">
+			</div>
+			<div>
+				<label for="job">업무</label>
+				<input type="text" id="job" th:field="*{jobId}">
+			</div>
+			<div>
+				<label for="sal">급여</label>
+				<input type="number" step="0.01" min="0" id="sal" th:field="*{salary}">
+			</div>
+			<div>
+				<button type="button" id="updateBtn">저장</button>
+			</div>
+		</form>
+	</div>
+
+	<script>
+		// ✅ 이벤트 등록
+		$('#updateBtn').on('click', updateAjax);
+
+		// ✅ 버튼 클릭 시 호출되는 함수
+		function updateAjax(event) {
+			// 1) 서버에 보낼 데이터 수집
+			let dataObj = getFormData();
+
+			// 2) Ajax로 서버에 전송
+			$.ajax({
+				url: 'empUpdate',
+				type: 'post',
+				contentType: 'application/json',
+				data: JSON.stringify(dataObj)
+			})
+			.done(result => {
+				console.log("성공:", result);
+			})
+			.fail(err => {
+				console.error("에러 발생:", err);
+			});
+		}
+
+		// ✅ 폼 데이터 수집 함수
+		function getFormData() {
+			let formAry = $('#updateForm').serializeArray();
+			let formObj = {};
+			$(formAry).each((idx, tag) => {
+				formObj[tag.name] = tag.value;
+			});
+			console.log("전송 데이터:", formObj);
+			return formObj;
+		}
+	</script>
+</body>
+</html>

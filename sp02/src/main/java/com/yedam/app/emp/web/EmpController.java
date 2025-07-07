@@ -10,90 +10,92 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.yedam.app.common.web.ParameterController;
 import com.yedam.app.emp.service.EmpService;
 import com.yedam.app.emp.service.EmpVO;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller 
-// 컨트롤러는 쉽게말해서 route, DispatherServlet이 활용한 정보를 등록하는 Bean
+// DispatherServlet이 활용한 정보를 등록하는 Bean
 // route : 사용자의 요청(endpoint)와 그에 대한 처리
-// URI + METHOD => Service => Response(View or Data)
+// 	URI + HTTP METHOD (get post delete) => Service => Response(View or Data)
 
 @RequiredArgsConstructor
 public class EmpController {
-
-    private final ParameterController parameterController;
-	// 해당 컨트롤러에 제공하는 서비스 목록
+	// 해당 컨트롤러에서 제공하는 서비스 목록
+	//final이 들어가면 무조건 생성자 요청, RequiredArgsConstructor(lombok) 사용.
 	private final EmpService empService;
 	
 	// GET : 조회, 빈페이지, 데이터 조작(삭제)
-	// POST : 데이터 조작 (등록, 수정, 삭제)
+	// POST : 데이터 조작(등록, 수정)
 	
-	// 전체조회 : GET
-	@GetMapping("empList") // 1) URI와 메서드 설정
-	public String empList(Model model) { // Model객체는 화면에 데이터를 전달하기 위해서 사용함
-		
-		// 2) 수행하는 기능
+	//전체조회 : GET
+	@GetMapping("empList")// URI + METHOD
+	public String empList(Model model) {
+		//2) 수행기능 => Service
 		List<EmpVO> list = empService.findAllList();
-		// 2-1) View에 전달할 데이터 담기
+		//2-1) view 에 전달할 데이터 담기
 		model.addAttribute("emps", list);
-		
-		// 3) 응답 형태 : View
+		//3) 응답형태 : View
 		return "emp/list";
-		// classpath:/template/  emp/list   .html
-		// prefix                return     suffix
+		//classpath:/template/emp/list.html
+		//prefix              return   suffix
 	}
-	
-	// 단건조회 : GET => QueryString
+	//단건조회 : GET => QueryString | empInfo?employeeId(key)=100(value)
 	@GetMapping("empInfo")
 	public String empInfo(EmpVO empVO, Model model) {
 		EmpVO findVO = empService.findInfoById(empVO);
 		model.addAttribute("emp", findVO);
 		return "emp/info";
+		//classpath:/template/emp/info.html
+		
 	}
+	
 	
 	// 등록 - 페이지 : GET
 	@GetMapping("empInsert")
 	public String empInsertForm() {
 		return "emp/insert";
+		//classpath:/template/emp/insert.html
 	}
 	
-	// 등록 - 처리 : POST => <form/>태그의 submit을 활용하는 경우가 매우 많다 / 인코딩 타입은 QueryString 타입
+	// 등록 - 처리 : POST => <form/> submit QueryString
 	@PostMapping("empInsert")
 	public String empInsertProcess(EmpVO empVO) {
 		int eid = empService.createInfo(empVO);
 		String url = null;
-		if(eid > -1) {
-			// 정상적으로 등록
+		if(eid > -1 ) {
+			//정상적으로 등록
 			url = "redirect:empInfo?employeeId=" + eid;
-		} else {
-			// 등록되지 않은 경우
-			url = "redirect:empList";
+		}else {
+			//등록되지 않은 경우 -> 얘는 등록이 실패했을때 실질적으로 실행되지 않을것 - 등록 실패 = 에러 이기 때문에 코드가 중단될것임.
+			url="redirect:empList";
 		}
 		return url;
 	}
 	
-	// 수정 - 페이지 : GET => 단건조회
+	// 수정 - 페이지 : GET <=> 단건조회와 같음. 경로, 이름 빼고 나머지는 다 같다고 보면 됌
 	@GetMapping("empUpdate")
 	public String empUpdateForm(EmpVO empVO, Model model) {
 		EmpVO findVO = empService.findInfoById(empVO);
 		model.addAttribute("emp", findVO);
 		return "emp/update";
 	}
-		
+	
 	// 수정 - 처리 : POST + AJAX + JSON
-	@PostMapping("empUpdate")
-	@ResponseBody // AJAX, AJAX를 사용하면 model객체를 사용하지않는다, AJAX는 화면없이 돌아가지만 model객체는 화면을 만들어주는 것                           
-	public Map<String, Object> empUpdateProcess(@RequestBody /*JSON*/ EmpVO empVO) {
+	@PostMapping("empUpdate")  
+	@ResponseBody // AJAX => Model 사용하지 않음
+												//JSON / 보내주는 데이터가 JSON 만이 아닐수도 있음.
+	public Map<String, Object> empUpdateProcess(@RequestBody EmpVO empVO) {
 		return empService.modifyInfo(empVO);
 	}
 	
-	// 삭제 - 처리 : GET => QueryString 방식
+	// 삭제 - 처리 : GET => QueryString : empDelete?employeeId=value
 	@GetMapping("empDelete")
-	public String empDelete(Integer employeeId) {
+	public String empDelete(Integer employeeId) { 
 		empService.removeInfo(employeeId);
-		return "redirect:empList";
+		return "redirect:empList"; //삭제된 데이터는 안보이게 돌려준다
 	}
+
+	
 }

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.yedam.app.aop.service.AopService;
-
 @SpringBootTest
 public class AopTest {
 	@Autowired
@@ -15,6 +14,4 @@ public class AopTest {
 	public void aopTest() {
 		aopService.insert();
 	}
-	
 }
-
