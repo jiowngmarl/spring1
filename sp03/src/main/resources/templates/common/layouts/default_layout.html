@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>자유 게시판</title>
+<!-- configs -->
+<th:block th:replace="~{common/configs/default_config.html :: defaultConfig}"></th:block> <!-- replace는 태그를 교체하는 방식 -->
+</head>
+<body>
+	<header th:insert="~{common/fragments/default_header.html :: HeaderFrag}"></header> <!-- insert는 자식태그로 들어가는 방식 -->
+	<main>
+		<th:block layout:fragment="Content">
+		</th:block>
+	</main>
+</body>
+</html>

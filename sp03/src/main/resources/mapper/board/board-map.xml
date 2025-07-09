@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.app.board.mapper.BoardMapper"> 
+	<!-- 전체조회 -->
+	<select id="selectAll" resultType="BoardVO"> <!-- id는 실행할 메서드명 resultType은 태그명-->
+		SELECT   bno
+				 ,title 
+		         ,writer
+		         ,contents
+		         ,regdate
+		         ,updatedate
+		         ,image
+		FROM     tbl_board
+		ORDER BY bno
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="insertInfo" parameterType="BoardVO">
+		<selectKey keyProperty="bno"
+				   resultType="Integer"
+				   order="BEFORE">
+			SELECT NVL (MAX(bno), 1000) + 1
+			FROM tbl_board
+		</selectKey>
+		INSERT INTO tbl_board
+			(
+				bno
+				,title
+				,writer
+				,contents
+				,regdate
+				,image
+			)
+			VALUES
+			(
+				#{bno}
+				,#{title}
+				,#{writer}
+				,#{contents}
+				,#{regdate}
+				,#{image}
+			)
+	</insert>
+</mapper>

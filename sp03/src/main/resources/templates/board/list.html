@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{common/layouts/default_layout}"
+  	  layout:fragment="Content">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container text-center"></div>
+	<table class="table">
+		<caption>total : [[ ${boards.size()} ]]</caption>
+		<thead>
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성일자</th>
+				<th>게시글</th>
+				<th>이미지</th>
+			</tr>
+		</thead>
+		<tbody>
+        	<th:block th:each=" info : ${boards} ">
+            	<tr>
+                    <td>[[ ${info.bno} ]]</td>
+                    <td>[[ ${info.title} ]]</td>
+                    <td>[[ ${info.writer} ]]</td>
+                    <td>[[ ${#dates.format(info.regdate, 'yy/MM/dd')} ]]</td>
+                    <td>[[ ${info.contents} ]]</td>
+                    <!-- http://localhost:8099/images/bird.jpg -->
+                	<td><img style="width:10%" th:src="@{/images/{fileName}(fileName=${info.image})}"></td>
+            	</tr>
+        	</th:block>
+    	</tbody>
+	</table>
+</body>
+</html>
