@@ -1,21 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org/">
+<html xmlns:th="https://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<meta name="_csrf" th:value="${_csrf.token}" />
+<meta name="_csrf_header" th:value="${_csrf.headerName}" />
 </head>
 <body>
-<h1>메인 페이지입니다.</h1>
-<ul>
-<li>
-<a href="@{/user}">일반 사용자용 페이지로</a>
-</li>
-<li>
-<a href="@{/admin}">관리자 전용 페이지로</a>
-</li>
-</ul>
-<form action="@{/logout}" method="post">
-<button type="submit">로그아웃</button>
-</form>
+    <h1>메인 페이지입니다.</h1>
+    <ul>
+        <li>
+            <a th:href="@{/user}">일반 사용자용 페이지로</a>
+        </li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')">
+            <a th:href="@{/admin}">관리자 전용 페이지로</a>
+        </li>
+    </ul>
+    <th:block sec:authorize="isAuthenticated()">
+		<p authentication="name"></p>
+		<p authentication="principal.username"></p>
+		<p authentication="principal.authorities"></p>
+		
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">로그아웃</button>
+        </form>
+    </th:block>
+    <script>
+    	const csrfHeader = $('meta[name="_csrf_header"]').attr("value");
+    	const csrfToken = $('meta[name="_csrf"]').attr("value");
+    	$.ajax('info', {
+    		type : 'post',
+    		data : {
+    			'keyword' : 'Hello!!!',
+    		},
+    		beforeSend : function(xhr){
+    			xhr.setRequestHeader(csrfHeader, csrfToken);
+    		}
+    	})
+    	.done(result => {
+    		console.log(result);
+    	})
+    	.fail(err => console.log(err));
+    </script>
 </body>
 </html>
